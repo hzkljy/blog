@@ -7,6 +7,7 @@ from django.utils.html import format_html
 
 
 from .models import Post, Category, Tag
+from .adminforms import PostAdminForm
 
 # Register your models here.
 
@@ -51,6 +52,7 @@ class CategoryOwnerFilter(admin.SimpleListFilter):
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
+    form = PostAdminForm
     list_display = [
         'title', 'category', 'status',
         'created_time', 'owner', 'operator',
