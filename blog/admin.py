@@ -53,7 +53,7 @@ class CategoryOwnerFilter(admin.SimpleListFilter):
 class PostAdmin(admin.ModelAdmin):
     list_display = [
         'title', 'category', 'status',
-        'created_time', 'owner', 'operator',
+        'created_time', 'operator',
     ]
     list_display_links = []
 
