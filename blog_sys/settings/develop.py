@@ -1,10 +1,9 @@
-from .base import * # NOQA
+# coding:utf-8
 
-# SECURITY WARNING: don't run with debug turned on in production!
+from .base import *  # NOQA
+
+
 DEBUG = True
-
-# Database
-# https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
 DATABASES = {
     'default': {
