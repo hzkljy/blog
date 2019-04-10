@@ -73,6 +73,9 @@ class Post(models.Model):
         (STATUS_DRAFT, '草稿'),
     )
 
+    pv = models.PositiveIntegerField(default=1)
+    uv = models.PositiveIntegerField(default=1)
+
     title = models.CharField(max_length=255, verbose_name='标题')
     desc = models.CharField(max_length=1024, blank=True, verbose_name='摘要')
     content = models.TextField(verbose_name='正文', help_text='正文必须为MarkDown格式')
@@ -114,5 +117,9 @@ class Post(models.Model):
             post_list = category.post_set.filter(status=Post.STATUS_NORMAL).select_related('owner', 'category')
 
         return post_list, category
+
+    @classmethod
+    def hot_posts(cls):
+        return cls.objects.filter(status=cls.STATUS_NORMAL).order_by('-pv')
 
 
