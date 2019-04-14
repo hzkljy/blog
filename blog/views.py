@@ -7,14 +7,17 @@ from django.shortcuts import get_object_or_404
 from config.models import SideBar
 from .models import Post, Category, Tag
 
+
 # Create your views here.
+__metaclass__ = type
+
 class CommonViewMixin:
-    def get_content_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+    def get_context_data(self, **kwargs):
+        context = super(CommonViewMixin,self).get_context_data(**kwargs)
         context.update({
             'sidebars': self.get_sidebars(),
         })
-        context.update(Category.get_navs())
+        context.update(self.get_navs())
         return context
     def get_sidebars(self):
         return SideBar.objects.filter(status=SideBar.STATUS_SHOW)
@@ -38,13 +41,13 @@ class CommonViewMixin:
 class IndexView(CommonViewMixin,ListView):
     queryset = Post.objects.filter(status=Post.STATUS_NORMAL)
     paginate_by = 5
-    context_object_name = 'post_name'
+    context_object_name = 'post_list'
     template_name = 'blog/list.html'
 
 
 class CategoryView(IndexView):
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+        context = super(CategoryView,self).get_context_data(**kwargs)
         category_id = self.kwargs.get('category_id')
         category = get_object_or_404(Category, pk=category_id)
         context.update({
@@ -54,13 +57,13 @@ class CategoryView(IndexView):
 
     def get_queryset(self):
         '''重写queryset，根据分类过滤'''
-        queryset = super().get_queryset()
+        queryset = super(CategoryView,self).get_queryset()
         category_id = self.kwargs.get('category_id')
         return queryset.filter(category_id=category_id)
 
 class TagView(IndexView):
     def get_context_data(self, **kwargs):
-        context = super().get_context(**kwargs)
+        context = super(TagView,self).get_context_data(**kwargs)
         tag_id = self.kwargs.get('tag_id')
         tag = get_object_or_404(Tag, pk=tag_id)
         context.update({
@@ -70,12 +73,13 @@ class TagView(IndexView):
 
     def get_queryset(self):
         '''重写queryset,根据标签过滤'''
-        queryset = super().get_queryset()
+        queryset = super(TagView,self).get_queryset()
         tag_id = self.kwargs.get('tag_id')
         return queryset.filter(tag__id=tag_id)
 
-class PostDetailView(DetailView):
-    queryset = Post.latest_posts()
+
+class PostDetailView(CommonViewMixin, DetailView):
+    queryset = Post.objects.filter(status=Post.STATUS_NORMAL)
     template_name = 'blog/detail.html'
     context_object_name = 'post'
     pk_url_kwarg = 'post_id'
